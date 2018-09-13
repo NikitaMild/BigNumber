@@ -650,20 +650,16 @@ bool BigNumber:: TMR(int &t){
   if(testing.array[0] & 1 ){
     s = countS(temp);
     PowS = PowS.powerS(s);
-    m = testing/PowS;
+    m = temp/PowS;
     R = m.res;
     int j = 0;
     for(int i = 0; i < t; ++i){
       BigNumber a;
-      j = 1 + rand() % testing.length;
-      a.ReSize(j);
-      a.RandomBigNumber();
-      while(a > testing){
-        a = a - testing;
-      }
-      if(a == testing){
-        a = a - two;
-      }
+      BigNumber n3 = testing - three;
+      a.ReSize(n3.length);
+      m = a / n3;
+      a = m.rem;
+      a = a + two;
       BigNumber B;
       B = a.BigPower(R,testing);
       if(B == one || B == temp){
@@ -695,4 +691,47 @@ bool BigNumber:: TMR(int &t){
     return false;
   }
   return true;
+}
+
+BigNumber BigNumber:: InsertBits(int i, int position, int count){
+  for(i; i < count; ++i){
+    int k = rand() % 2;
+    array[position] = array[position] | (k << i);
+  }
+  return *this;
+}
+
+BigNumber BigNumber:: RandomBitNumber(int bits){
+    int len = 0;
+    if(bits/16 == 0){
+      len = 1;
+    }
+    else{
+      if (bits % 16){
+        len = bits/16 + 1;
+      }
+      else{
+        len = bits/16;
+      }
+    }
+    BigNumber temp(len);
+    if (len == 1){
+      temp.array[0] = 1 << 0;
+      temp.InsertBits(1,0,bits - 1);
+      temp.array[0] = temp.array[0] | (1 << (bits - 1));
+      return temp;
+    }
+    temp.array[0] = 1 << 0;
+    temp.InsertBits(1,0,16);
+    for(int i = 1; i < len - 1; ++i){
+      temp.InsertBits(0,i,16);
+    }
+    if(bits % 16 == 0){
+      temp.InsertBits(0,len-1,15);
+      temp.array[len-1] = temp.array[len-1] | 1 << 15 ;
+      return temp;
+    }
+    temp.InsertBits(0,len-1,bits % 16 - 2);
+    temp.array[len-1] = temp.array[len-1] | 1 << (bits % 16 - 1) ;
+    return temp;
 }
